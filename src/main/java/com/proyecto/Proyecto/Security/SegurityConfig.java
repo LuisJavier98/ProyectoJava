@@ -33,8 +33,13 @@ public class SegurityConfig {
                         .requestMatchers(regexMatcher("/api/productos/[0-9]+")).permitAll()
                         .anyRequest()
                         .authenticated())
-                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.configure(httpSecurity)).sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.accessDeniedHandler((request, response, accessDeniedException) ->{
+                    response.setStatus(response.SC_FORBIDDEN);
+                    response.getWriter().write("{\"message\": \"Acceso denegado\"}");
+                } ))
+                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return httpSecurity.build();
     }
 

@@ -16,4 +16,5 @@ public class ExceptionHandlerController {
         response.put("message", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
 }
