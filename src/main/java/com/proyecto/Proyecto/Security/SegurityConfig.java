@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.web.util.matcher.RegexRequestMatcher.regexMatcher;
+
 @Configuration
 @EnableWebSecurity
 public class SegurityConfig {
@@ -28,6 +30,7 @@ public class SegurityConfig {
         httpSecurity.cors(Customizer.withDefaults()).csrf((csrf) -> csrf.disable())
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/usuario/activarCuenta", "/api/usuario/login", "/api/usuario", "/api/productos", "/images/*", "/api/usuario/enviarCorreo")
                         .permitAll()
+                        .requestMatchers(regexMatcher("/api/productos/[0-9]+")).permitAll()
                         .anyRequest()
                         .authenticated())
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.configure(httpSecurity)).sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

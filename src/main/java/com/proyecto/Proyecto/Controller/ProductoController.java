@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("api/productos")
@@ -22,6 +23,16 @@ import java.util.List;
 public class ProductoController {
 
     private ProductoService productoService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtenerProducto(@PathVariable Long id, HttpServletRequest request) {
+        Producto producto = productoService.obtenerProductoById(id, request);
+        if (!Objects.isNull(producto)) {
+            return new ResponseEntity<>(producto, HttpStatus.OK);
+        } HashMap<String, String> respuesta = new HashMap<>();
+        respuesta.put("mensaje", "Producto no encontrado");
+        return new ResponseEntity<>(respuesta, HttpStatus.BAD_REQUEST);
+    }
 
     @GetMapping
     public ResponseEntity<List<Producto>> obtenerProductos(HttpServletRequest request) {
@@ -50,8 +61,8 @@ public class ProductoController {
 
     @PatchMapping("/actualizarProducto/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<HashMap<String, Object>> actualizarProducto(@NotNull @PathVariable Long id, @RequestParam(value = "file",required = false) MultipartFile file,  @RequestParam(value = "nombre",required = false) String nombre, @RequestParam(value = "precio",required = false) String precio, @RequestParam(value = "categoria",required = false) String categoria,@RequestParam(value = "descripcion",required = false) String descripcion,  @RequestParam(value = "unidades",required = false) String unidades ) throws IOException {
-        Response respuesta = productoService.actualizarProducto(id,file,nombre,precio,categoria,descripcion,unidades);
+    public ResponseEntity<HashMap<String, Object>> actualizarProducto(@NotNull @PathVariable Long id, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "nombre", required = false) String nombre, @RequestParam(value = "precio", required = false) String precio, @RequestParam(value = "categoria", required = false) String categoria, @RequestParam(value = "descripcion", required = false) String descripcion, @RequestParam(value = "unidades", required = false) String unidades) throws IOException {
+        Response respuesta = productoService.actualizarProducto(id, file, nombre, precio, categoria, descripcion, unidades);
         if (respuesta.getIsBadResponse())
             return new ResponseEntity<>(respuesta.mensajeResponse(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(respuesta.mensajeResponse(), HttpStatus.OK);

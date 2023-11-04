@@ -7,6 +7,7 @@ import com.proyecto.Proyecto.Repository.UsuarioJpaRepository;
 import com.proyecto.Proyecto.Responses.Response;
 import com.proyecto.Proyecto.Security.CustomDetailsServices;
 import com.proyecto.Proyecto.Security.jwt.JwtUtil;
+import com.proyecto.Proyecto.Util.UsuarioActualizado;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,22 +39,21 @@ public class UsuarioService {
     @Autowired
     private RolJpaRepository rolJpaRepository;
 
-    public Response actualizarUsuario(HashMap<String, Object> usuarioActualizado, HttpServletRequest request) {
+    public Response actualizarUsuario(UsuarioActualizado usuarioActualizado, HttpServletRequest request) {
         String token = request.getHeader("Authorization").split(" ")[1];
         Usuario usuario = usuarioJpaRepository.findById(jwtUtil.getUserId(token)).orElse(null);
-        Usuario usuarioNumero = usuarioJpaRepository.findByNumero(usuarioActualizado.get("numero")).orElse(null);
-        Usuario usuarioNumeroId = usuarioJpaRepository.findAllByNumeroAndId(usuarioActualizado.get("numero"), jwtUtil.getUserId(token)).orElse(null);
-        if (!Objects.isNull(usuarioActualizado.get("nombre")))
-            usuario.setNombre((String) usuarioActualizado.get("nombre"));
-        if (!Objects.isNull(usuarioActualizado.get("apellido")))
-            usuario.setApellido((String) usuarioActualizado.get("apellido"));
-        if ((Long) usuarioActualizado.get("numero") < 100000000) return new Response("El numero de celular debe contener 9 digitos", true);
-        if ((Long) usuarioActualizado.get("numero") > 999999999) return new Response("El numero de celular debe contener 9 digitos", true);
-        if (!Objects.isNull(usuarioActualizado.get("numero")) && Objects.isNull(usuarioNumero)) {
-            usuario.setNumero((Long) usuarioActualizado.get("numero"));
-        } else if (!Objects.isNull(usuarioActualizado.get("numero")) && !Objects.isNull(usuarioNumeroId)) {
+        Usuario usuarioNumero = usuarioJpaRepository.findByNumero(usuarioActualizado.getNumero()).orElse(null);
+        Usuario usuarioNumeroId = usuarioJpaRepository.findAllByNumeroAndId(usuarioActualizado.getNumero(), jwtUtil.getUserId(token)).orElse(null);
+        if (!Objects.isNull(usuarioActualizado.getNombre())) usuario.setNombre(usuarioActualizado.getNombre());
+        if (!Objects.isNull(usuarioActualizado.getApellido())) usuario.setApellido(usuarioActualizado.getApellido());
+        if (!Objects.isNull(usuarioActualizado.getNumero()) && Objects.isNull(usuarioNumero)) {
+            System.out.println(usuarioActualizado.getNumero() );
+            if (!(usuarioActualizado.getNumero() >= 900000000 && usuarioActualizado.getNumero() <= 999999999L))
+                return new Response("Introduce un numero de celular valido", true);
+            usuario.setNumero(usuarioActualizado.getNumero());
+        } else if (!Objects.isNull(usuarioActualizado.getNumero()) && !Objects.isNull(usuarioNumeroId)) {
             return new Response("Introduce un numero distinto al anterior", true);
-        } else if (!Objects.isNull(usuarioActualizado.get("numero"))) {
+        } else if (!Objects.isNull(usuarioActualizado.getNumero())) {
             return new Response("El numero ya se encuentra en uso", true);
         }
         usuario.setActualizado(new Date());
@@ -63,8 +63,8 @@ public class UsuarioService {
 
     public Response crearUsuario(Usuario usuario, String token) {
         if (usuario.getNumero() == 0) return new Response("Introduce tu numero de celular", true);
-        if (usuario.getNumero() < 100000000) return new Response("El numero de celular debe contener 9 digitos", true);
-        if (usuario.getNumero() > 999999999) return new Response("El numero de celular debe contener 9 digitos", true);
+        if (!(usuario.getNumero() > 900000000L && usuario.getNumero() <= 999999999L))
+            return new Response("Introduce un numero de celular valido", true);
         if (Objects.isNull(usuario.getApellido())) return new Response("Introduce tu apellido", true);
         if (Objects.isNull(usuario.getNombre())) return new Response("Introduce tu nombre", true);
         if (Objects.isNull(usuario.getContrasenia())) return new Response("Introduce tu contraseña", true);
@@ -76,6 +76,7 @@ public class UsuarioService {
             return new Response("El numero que introdujo ya se encuentra en uso , por favor intente nuevamente", true);
         Roles rol = rolJpaRepository.findById(2L).orElse(null);
         if (Objects.isNull(rol)) return new Response("El rol no existe", true);
+        usuario.setNumero(usuario.getNumero());
         usuario.setRol(rol);
         usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
         usuario.setCreado(new Date());
@@ -113,6 +114,10 @@ public class UsuarioService {
     }
 
     public Response actualizarContraseña(HashMap<String, String> contraseñas, HttpServletRequest request) {
+        if (Objects.isNull(contraseñas.get("contraseña"))) return new Response("Introduce la contraseña actual", true);
+        if (Objects.isNull(contraseñas.get("contraseñaNueva")))
+            return new Response("Introduce la contraseña nueva", true);
+
         String token = request.getHeader("Authorization").split(" ")[1];
         Usuario usuario = usuarioJpaRepository.findById(jwtUtil.getUserId(token)).orElse(null);
         String contraseñaAnterior = usuario.getContrasenia();

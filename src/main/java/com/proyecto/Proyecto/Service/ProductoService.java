@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,9 +27,15 @@ public class ProductoService {
     private ProductoJpaRepository productoJpaRepository;
 
 
-    public Optional<Producto> obtenerProductoById(long id) {
-        Optional<Producto> producto = productoJpaRepository.findById(id);
-        return producto;
+    public Producto obtenerProductoById(long id, HttpServletRequest request) {
+        Producto producto = productoJpaRepository.findById(id).orElse(null);
+        if (!Objects.isNull(producto)) {
+            String domain = request.getScheme() + "://" + request.getServerName();
+            int port = request.getLocalPort();
+            producto.setImagen(domain + ":" + port + "/images" + producto.getImagen());
+            return producto;
+        }
+        return null;
     }
 
     public List<Producto> obtenerProductos(HttpServletRequest request) {
@@ -79,7 +84,7 @@ public class ProductoService {
     public Response actualizarProducto(Long id, MultipartFile imagen, String nombre, String precio, String categoria, String descripcion, String unidades) throws IOException {
         Producto producto = productoJpaRepository.findById(id).orElse(null);
         if (Objects.isNull(producto)) return new Response("El producto no existe", true);
-        if (!Objects.isNull(imagen) && !producto.getImagen().equals("/"+imagen.getOriginalFilename())) {
+        if (!Objects.isNull(imagen) && !producto.getImagen().equals("/" + imagen.getOriginalFilename())) {
             //ELIMINAR PRODUCTO DE IMAGENES
             String ruta = "images" + producto.getImagen().replace("%20", " ");
             Path path = Paths.get(ruta);

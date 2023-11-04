@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/carrito")
@@ -51,7 +50,7 @@ public class CarritoController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<HashMap<String, Object>> actualizarCantidadCarrito(@RequestBody @Valid @NotNull HashMap<String, Integer> cantidad, @PathVariable long id, HttpServletRequest request) throws Exception {
+    public ResponseEntity<HashMap<String, Object>> actualizarCantidadCarrito(@RequestBody HashMap<String, Integer> cantidad, @PathVariable long id, HttpServletRequest request) throws Exception {
         Response respuesta = carritoService.actualizarCantidadDelCarrito(cantidad, id, request);
         if (!respuesta.getIsBadResponse()) {
             return new ResponseEntity<>(respuesta.mensajeResponse(), HttpStatus.OK);

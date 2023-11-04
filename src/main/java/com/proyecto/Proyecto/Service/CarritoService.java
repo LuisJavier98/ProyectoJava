@@ -70,8 +70,8 @@ public class CarritoService {
                 temp.put("Categoria", carrito.getProducto().getCategoria());
                 temp.put("Descripción", carrito.getProducto().getDescripcion());
                 temp.put("Precio", carrito.getProducto().getPrecio());
-                temp.put("Imagen", domain + ":" + port + "/images" +  carrito.getProducto().getImagen());
-                temp.put("Cantidad",carrito.getCantidad());
+                temp.put("Imagen", domain + ":" + port + "/images" + carrito.getProducto().getImagen());
+                temp.put("Cantidad", carrito.getCantidad());
                 return temp;
             }).collect(Collectors.toList());
             return respuesta;
@@ -93,6 +93,7 @@ public class CarritoService {
 
 
     public Response actualizarCantidadDelCarrito(HashMap<String, Integer> cantidad, Long id, HttpServletRequest request) {
+        if (Objects.isNull(cantidad.get("cantidad"))) return new Response("Introduce la cantidad de unidades a comprar", true);
         String token = request.getHeader("Authorization").split(" ")[1];
         Carrito carrito = carritoJpaRepository.findByProducto_idAndUsuario_id(id, jwtUtil.getUserId(token));
         Producto producto = productoJpaRepository.findById(id).orElse(null);

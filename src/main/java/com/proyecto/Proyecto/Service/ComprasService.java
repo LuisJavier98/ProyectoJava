@@ -35,9 +35,10 @@ public class ComprasService {
         List<Carrito> carrito = carritoJpaRepository.findAllByUsuario_id(jwtUtil.getUserId(token)).orElse(null);
         List<Compras> compras = new ArrayList<>();
         List<Producto> productos = new ArrayList<>();
-        if (carrito.size() == 0) {
+        if (carrito.isEmpty()) {
             return new Response("El carrito esta vacio", true);
         }
+        if (direccion.get("direccion").isEmpty()) return new Response("Introduce la dirección de entrega", true);
         try {
             carrito.stream().forEach(carrito1 -> {
                 Producto producto = productoJpaRepository.findById(carrito1.getProducto().getId()).orElse(null);
@@ -47,6 +48,7 @@ public class ComprasService {
                     compra.setDireccion(direccion.get("direccion"));
                     compra.setUsuario(carrito1.getUsuario());
                     compra.setProducto(carrito1.getProducto());
+                    compra.setCantidad(carrito1.getCantidad());
                     compra.setFechaCompra(new Date());
                     compras.add(compra);
                     productos.add(producto);
@@ -65,4 +67,22 @@ public class ComprasService {
             return new Response(e.getMessage(), true);
         }
     }
+
+    public List<HashMap<String, Object>> obtenerCompras(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").split(" ")[1];
+        List<HashMap<String, Object>> respuesta = new ArrayList<>();
+        List<Compras> compras = comprasJpaRepository.findAllByUsuario_id(jwtUtil.getUserId(token));
+        compras.forEach(compras1 ->{
+            HashMap<String,Object> res=new HashMap<>();
+            res.put("id",compras1.getId());
+            res.put("producto",compras1.getProducto().getId());
+            res.put("cantidad",compras1.getCantidad());
+            res.put("direccion",compras1.getDireccion());
+            res.put("fechaComprada",compras1.getFechaCompra());
+            respuesta.add(res);
+        });
+        return respuesta;
+    }
+
+
 }

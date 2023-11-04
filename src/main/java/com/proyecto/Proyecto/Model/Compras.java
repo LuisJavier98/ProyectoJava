@@ -20,6 +20,7 @@ public class Compras {
     private Usuario usuario;
     @ManyToOne
     private Producto producto;
+    private int cantidad;
     private String direccion;
     private Date fechaCompra;
 

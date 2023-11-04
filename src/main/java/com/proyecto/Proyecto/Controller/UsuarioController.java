@@ -5,6 +5,7 @@ import com.proyecto.Proyecto.Responses.Response;
 import com.proyecto.Proyecto.Responses.Validations;
 import com.proyecto.Proyecto.Service.UsuarioService;
 import com.proyecto.Proyecto.Util.TokenGenerator;
+import com.proyecto.Proyecto.Util.UsuarioActualizado;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -29,12 +30,14 @@ public class UsuarioController {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    public ResponseEntity<?> enviarCorreo(String correo, String token) {
+    public ResponseEntity<?> enviarCorreo(String correo, String token, HttpServletRequest request) {
+        String domain = request.getScheme() + "://" + request.getServerName();
+        int port = request.getLocalPort();
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(correo);
         email.setFrom("correodeprueba.2700@gmail.com");
-        email.setSubject("Mensaje de prueba 1");
-        email.setText(String.format("Ingrese al siguiente link para activar su cuenta http://localhost:8000/api/usuario/activarCuenta?token=%s", token));
+        email.setSubject("Mensaje de verificacion de cuenta");
+        email.setText(String.format("Ingrese al siguiente link para activar su cuenta " + "%s/api/usuario/activarCuenta?token=%s", domain + ":" + port, token));
         javaMailSender.send(email);
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
@@ -50,8 +53,8 @@ public class UsuarioController {
     }
 
     @PatchMapping("/actualizarUsuario")
-    public ResponseEntity<HashMap<String, Object>> actualizarUsuario(@RequestBody @NotNull @Valid HashMap<String, Object> usuarioNuevo, HttpServletRequest request) {
-        Response respuesta = usuarioService.actualizarUsuario(usuarioNuevo, request);
+    public ResponseEntity<HashMap<String, Object>> actualizarUsuario(@RequestBody @NotNull @Valid UsuarioActualizado usuarioActualizado, HttpServletRequest request) {
+        Response respuesta = usuarioService.actualizarUsuario(usuarioActualizado, request);
         if (!respuesta.getIsBadResponse()) {
             return new ResponseEntity<>(respuesta.mensajeResponse(), HttpStatus.OK);
         }
@@ -69,7 +72,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<HashMap<String, Object>> crearUsuario(@RequestBody @Valid @NotNull Usuario usuario) {
+    public ResponseEntity<HashMap<String, Object>> crearUsuario(@RequestBody @Valid @NotNull Usuario usuario, HttpServletRequest request) {
         if (Objects.isNull(usuario.getEmail()))
             return new ResponseEntity<>(new Response("Introduce un correo electronico", true).mensajeResponse(), HttpStatus.BAD_REQUEST);
         if (new Validations(usuario.getEmail()).isValidEmail()) {
@@ -78,7 +81,7 @@ public class UsuarioController {
             if (respuesta.getIsBadResponse()) {
                 return new ResponseEntity<>(respuesta.mensajeResponse(), HttpStatus.BAD_REQUEST);
             }
-            enviarCorreo(usuario.getEmail(), token);
+            enviarCorreo(usuario.getEmail(), token, request);
             return new ResponseEntity<>(respuesta.mensajeResponse(), HttpStatus.CREATED);
         }
         return new ResponseEntity<>(new Response("Email no valido", true).mensajeResponse(), HttpStatus.BAD_REQUEST);
