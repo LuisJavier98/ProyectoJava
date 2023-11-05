@@ -1,14 +1,19 @@
-package com.proyecto.Proyecto.Controller;
+package com.proyecto.Proyecto.controllers;
 
 import com.proyecto.Proyecto.Model.Usuario;
 import com.proyecto.Proyecto.Responses.Response;
 import com.proyecto.Proyecto.Responses.Validations;
 import com.proyecto.Proyecto.Service.UsuarioService;
+import com.proyecto.Proyecto.Swagger.Schemas.ActualizarContraseña;
+import com.proyecto.Proyecto.Swagger.Schemas.Login;
+import com.proyecto.Proyecto.Swagger.Schemas.NuevoUsuario;
 import com.proyecto.Proyecto.Util.TokenGenerator;
 import com.proyecto.Proyecto.Util.UsuarioActualizado;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +27,6 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("api/usuario")
-@AllArgsConstructor
 public class UsuarioController {
 
     @Autowired
@@ -43,6 +47,10 @@ public class UsuarioController {
     }
 
     @PatchMapping("/actualizarContraseña")
+    @Operation(summary = "Actualiza la contraserña del usuario")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Cuerpo de la solicitud para la creación de un elemento",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ActualizarContraseña.class)))
     public ResponseEntity<HashMap<String, Object>> actualizarContraseña(@RequestBody @NotNull @Valid HashMap<String, String> contraseñas, HttpServletRequest request) {
         Response respuesta = usuarioService.actualizarContraseña(contraseñas, request);
         if (!respuesta.getIsBadResponse()) {
@@ -53,6 +61,8 @@ public class UsuarioController {
     }
 
     @PatchMapping("/actualizarUsuario")
+    @Operation(summary = "Actualiza el usuario")
+
     public ResponseEntity<HashMap<String, Object>> actualizarUsuario(@RequestBody @NotNull @Valid UsuarioActualizado usuarioActualizado, HttpServletRequest request) {
         Response respuesta = usuarioService.actualizarUsuario(usuarioActualizado, request);
         if (!respuesta.getIsBadResponse()) {
@@ -63,6 +73,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/activarCuenta")
+    @Operation(summary = "Valida del usuario")
+
     public ResponseEntity<HashMap<String, Object>> validarUsuario(@RequestParam("token") String token) {
         Response respuesta = usuarioService.habilitarUsuario(token);
         if (!respuesta.getIsBadResponse()) {
@@ -72,6 +84,10 @@ public class UsuarioController {
     }
 
     @PostMapping
+    @Operation(summary = "Crea un nuevo usuario")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Cuerpo de la solicitud para la creación de un elemento",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = NuevoUsuario.class)))
     public ResponseEntity<HashMap<String, Object>> crearUsuario(@RequestBody @Valid @NotNull Usuario usuario, HttpServletRequest request) {
         if (Objects.isNull(usuario.getEmail()))
             return new ResponseEntity<>(new Response("Introduce un correo electronico", true).mensajeResponse(), HttpStatus.BAD_REQUEST);
@@ -88,6 +104,10 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Loggeo del usuario")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Cuerpo de la solicitud para la creación de un elemento",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Login.class)))
     public ResponseEntity<HashMap<String, Object>> usuarioLogin(@RequestBody HashMap<String, String> login) {
         Response respuesta = usuarioService.loginUsuario(login);
         if (!respuesta.getIsBadResponse()) return new ResponseEntity<>(respuesta.mensajeResponse(), HttpStatus.OK);

@@ -1,5 +1,6 @@
 package com.proyecto.Proyecto.Model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class Compras {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
+    @Schema(description = "Usuario", example = "Libro")
     private Usuario usuario;
     @ManyToOne
     private Producto producto;

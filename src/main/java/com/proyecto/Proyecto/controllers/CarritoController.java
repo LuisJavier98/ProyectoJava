@@ -1,8 +1,12 @@
-package com.proyecto.Proyecto.Controller;
+package com.proyecto.Proyecto.controllers;
 
 import com.proyecto.Proyecto.Responses.Response;
 import com.proyecto.Proyecto.Security.jwt.JwtUtil;
 import com.proyecto.Proyecto.Service.CarritoService;
+import com.proyecto.Proyecto.Swagger.Schemas.Cantidad;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,10 @@ public class CarritoController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/{id}")
+    @Operation(summary = "Crea un producto")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Cuerpo de la solicitud para la creación de un elemento",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Cantidad.class)))
     public ResponseEntity<HashMap<String, Object>> crearProducto_Usuario(@RequestBody @Valid @NotNull HashMap<String, Integer> cantidad, @PathVariable long id, HttpServletRequest request) throws Exception {
         Response respuesta = carritoService.crearProductoCarrito(cantidad, id, request);
         if (!respuesta.getIsBadResponse()) {
@@ -34,11 +42,13 @@ public class CarritoController {
     }
 
     @GetMapping
+    @Operation(summary = "Obtiene todos los productos del carrito ")
     public ResponseEntity<List<HashMap<String, Object>>> obtenerProductoPorUsuarioId(HttpServletRequest request) {
         return new ResponseEntity<>(carritoService.obtenerProductos_Usuario(request), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un producto del carrito")
     public ResponseEntity<HashMap<String, Object>> eliminarProductoDeCarrito(@PathVariable Long id, HttpServletRequest request) throws Exception {
         Response respuesta = carritoService.eliminarProductoDelCarrito(id, request);
         if (!respuesta.getIsBadResponse()) {
@@ -50,6 +60,10 @@ public class CarritoController {
     }
 
     @PatchMapping("/{id}")
+    @Operation(summary = "Actualiza la cantidad de productos del carrito")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Cuerpo de la solicitud para la creación de un elemento",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Cantidad.class)))
     public ResponseEntity<HashMap<String, Object>> actualizarCantidadCarrito(@RequestBody HashMap<String, Integer> cantidad, @PathVariable long id, HttpServletRequest request) throws Exception {
         Response respuesta = carritoService.actualizarCantidadDelCarrito(cantidad, id, request);
         if (!respuesta.getIsBadResponse()) {

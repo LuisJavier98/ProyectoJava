@@ -28,13 +28,15 @@ public class SegurityConfig {
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors(Customizer.withDefaults()).csrf((csrf) -> csrf.disable())
-                .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/usuario/activarCuenta", "/api/usuario/login", "/api/usuario", "/api/productos", "/images/*", "/api/usuario/enviarCorreo")
+                .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/usuario/activarCuenta","/v3/api-docs","/doc/swagger-ui.html", "/api/usuario/login", "/api/usuario", "/api/productos", "/images/*", "/api/usuario/enviarCorreo")
                         .permitAll()
                         .requestMatchers(regexMatcher("/api/productos/[0-9]+")).permitAll()
+                        .requestMatchers(regexMatcher("/doc/swagger-ui/[a-zA-Z0-9%-._#]+")).permitAll()
                         .anyRequest()
                         .authenticated())
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.accessDeniedHandler((request, response, accessDeniedException) ->{
                     response.setStatus(response.SC_FORBIDDEN);
+                    response.setContentType("application/json");
                     response.getWriter().write("{\"message\": \"Acceso denegado\"}");
                 } ))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

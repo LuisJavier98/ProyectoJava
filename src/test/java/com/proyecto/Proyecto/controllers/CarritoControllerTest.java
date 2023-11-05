@@ -1,4 +1,4 @@
-package com.proyecto.Proyecto.Controller;
+package com.proyecto.Proyecto.controllers;
 
 import com.proyecto.Proyecto.Service.CarritoService;
 import org.junit.jupiter.api.Test;

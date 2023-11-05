@@ -29,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if (request.getServletPath().matches("/api/usuario/activarCuenta|/api/usuario/login|/api/productos|/api/usuario|/api/productos/[0-9]+|/api/usuario/enviarCorreo|/images/[a-zA-Z0-9%.-]+")) {
+        if (request.getServletPath().matches("/api/usuario/activarCuenta|/api/usuario/login|/doc/swagger-ui.html|/[a-zA-Z0-9%-._#]+|/doc/swagger-ui/[a-zA-Z0-9%-._#]+|/api/productos|/v3/api-docs|/api/usuario|/api/productos/[0-9]+|/api/usuario/enviarCorreo|/images/[a-zA-Z0-9%.-]+")) {
             System.out.println("entra aqui");
             filterChain.doFilter(request, response);
         } else {
