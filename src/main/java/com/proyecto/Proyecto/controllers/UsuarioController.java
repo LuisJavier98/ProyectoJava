@@ -10,8 +10,11 @@ import com.proyecto.Proyecto.Swagger.Schemas.NuevoUsuario;
 import com.proyecto.Proyecto.Util.TokenGenerator;
 import com.proyecto.Proyecto.Util.UsuarioActualizado;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("api/usuario")
+@SecurityScheme(name = "bearerAuth", type = SecuritySchemeType.HTTP, scheme = "bearer")
 public class UsuarioController {
 
     @Autowired
@@ -47,7 +51,8 @@ public class UsuarioController {
     }
 
     @PatchMapping("/actualizarContraseña")
-    @Operation(summary = "Actualiza la contraserña del usuario")
+    @Operation(summary = "Actualiza la contraseña del usuario")
+    @SecurityRequirement(name = "bearerAuth")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Cuerpo de la solicitud para la creación de un elemento",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ActualizarContraseña.class)))
@@ -62,7 +67,7 @@ public class UsuarioController {
 
     @PatchMapping("/actualizarUsuario")
     @Operation(summary = "Actualiza el usuario")
-
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<HashMap<String, Object>> actualizarUsuario(@RequestBody @NotNull @Valid UsuarioActualizado usuarioActualizado, HttpServletRequest request) {
         Response respuesta = usuarioService.actualizarUsuario(usuarioActualizado, request);
         if (!respuesta.getIsBadResponse()) {
@@ -73,7 +78,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/activarCuenta")
-    @Operation(summary = "Valida del usuario")
+    @Operation(summary = "Validación del usuario")
 
     public ResponseEntity<HashMap<String, Object>> validarUsuario(@RequestParam("token") String token) {
         Response respuesta = usuarioService.habilitarUsuario(token);
