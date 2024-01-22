@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Compras.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Proyecto-Codigo</a> &gt; <a href="index.source.html" class="el_package">com.proyecto.Proyecto.Model</a> &gt; <span class="el_source">Compras.java</span></div><h1>Compras.java</h1><pre class="source lang-java linenums">package com.proyecto.Proyecto.Model;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import lombok.*;
+
+import java.util.Date;
+
+<span class="nc" id="L11">@AllArgsConstructor</span>
+<span class="fc" id="L12">@NoArgsConstructor</span>
+@Getter
+<span class="nc" id="L14">@Setter</span>
+@Entity
+<span class="nc" id="L16">@ToString</span>
+@Table(name = &quot;compras&quot;)
+public class Compras  {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="nc" id="L21">    private Long id;</span>
+    @ManyToOne
+    @Schema(description = &quot;Usuario&quot;, example = &quot;Libro&quot;)
+<span class="nc" id="L24">    private Usuario usuario;</span>
+    @ManyToOne
+<span class="nc" id="L26">    private Producto producto;</span>
+    @Positive(message = &quot;La cantidad debe ser mayor a cero&quot;)
+<span class="nc" id="L28">    private int cantidad;</span>
+    @NotBlank(message = &quot;Por favor , indique una dirección&quot;)
+<span class="nc" id="L30">    private String direccion;</span>
+<span class="nc" id="L31">    private Date fechaCompra;</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

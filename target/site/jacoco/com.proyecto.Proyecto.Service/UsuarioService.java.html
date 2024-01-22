@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsuarioService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Proyecto-Codigo</a> &gt; <a href="index.source.html" class="el_package">com.proyecto.Proyecto.Service</a> &gt; <span class="el_source">UsuarioService.java</span></div><h1>UsuarioService.java</h1><pre class="source lang-java linenums">package com.proyecto.Proyecto.Service;
+
+import com.proyecto.Proyecto.Model.Roles;
+import com.proyecto.Proyecto.Model.Usuario;
+import com.proyecto.Proyecto.Repository.RolJpaRepository;
+import com.proyecto.Proyecto.Repository.UsuarioJpaRepository;
+import com.proyecto.Proyecto.Responses.Response;
+import com.proyecto.Proyecto.Security.CustomDetailsServices;
+import com.proyecto.Proyecto.Security.jwt.JwtUtil;
+import com.proyecto.Proyecto.Util.UsuarioActualizado;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Objects;
+
+@Service
+<span class="fc" id="L26">@AllArgsConstructor</span>
+<span class="fc" id="L27">@Slf4j</span>
+public class UsuarioService {
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    private UsuarioJpaRepository usuarioJpaRepository;
+    @Autowired
+    private CustomDetailsServices customDetailsServices;
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private RolJpaRepository rolJpaRepository;
+
+    public Response actualizarUsuario(UsuarioActualizado usuarioActualizado, HttpServletRequest request) {
+<span class="nc" id="L43">        String token = request.getHeader(&quot;Authorization&quot;).split(&quot; &quot;)[1];</span>
+<span class="nc" id="L44">        Usuario usuario = usuarioJpaRepository.findById(jwtUtil.getUserId(token)).orElse(null);</span>
+<span class="nc" id="L45">        Usuario usuarioNumero = usuarioJpaRepository.findByNumero(usuarioActualizado.getNumero()).orElse(null);</span>
+<span class="nc" id="L46">        Usuario usuarioNumeroId = usuarioJpaRepository.findAllByNumeroAndId(usuarioActualizado.getNumero(), jwtUtil.getUserId(token)).orElse(null);</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (!Objects.isNull(usuarioActualizado.getNombre())) usuario.setNombre(usuarioActualizado.getNombre());</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (!Objects.isNull(usuarioActualizado.getApellido())) usuario.setApellido(usuarioActualizado.getApellido());</span>
+<span class="nc bnc" id="L49" title="All 4 branches missed.">        if (!Objects.isNull(usuarioActualizado.getNumero()) &amp;&amp; Objects.isNull(usuarioNumero)) {</span>
+<span class="nc" id="L50">            System.out.println(usuarioActualizado.getNumero());</span>
+<span class="nc bnc" id="L51" title="All 4 branches missed.">            if (!(usuarioActualizado.getNumero() &gt;= 900000000 &amp;&amp; usuarioActualizado.getNumero() &lt;= 999999999L))</span>
+<span class="nc" id="L52">                return new Response(&quot;Introduce un numero de celular valido&quot;, true);</span>
+<span class="nc" id="L53">            usuario.setNumero(String.valueOf(usuarioActualizado.getNumero()));</span>
+<span class="nc bnc" id="L54" title="All 4 branches missed.">        } else if (!Objects.isNull(usuarioActualizado.getNumero()) &amp;&amp; !Objects.isNull(usuarioNumeroId)) {</span>
+<span class="nc" id="L55">            return new Response(&quot;Introduce un numero distinto al anterior&quot;, true);</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        } else if (!Objects.isNull(usuarioActualizado.getNumero())) {</span>
+<span class="nc" id="L57">            return new Response(&quot;El numero ya se encuentra en uso&quot;, true);</span>
+        }
+<span class="nc" id="L59">        usuarioJpaRepository.save(usuario);</span>
+<span class="nc" id="L60">        return new Response(&quot;Usuario actualizado correctamente&quot;, false);</span>
+    }
+
+    public Response crearUsuario(@Valid Usuario usuario, String token) {
+//        if (usuario.getNumero() == 0) return new Response(&quot;Introduce tu numero de celular&quot;, true);
+//        if (!(usuario.getNumero() &gt; 900000000L &amp;&amp; usuario.getNumero() &lt;= 999999999L))
+//            return new Response(&quot;Introduce un numero de celular valido&quot;, true);
+//        if (Objects.isNull(usuario.getApellido())) return new Response(&quot;Introduce tu apellido&quot;, true);
+//        if (Objects.isNull(usuario.getNombre())) return new Response(&quot;Introduce tu nombre&quot;, true);
+//        if (Objects.isNull(usuario.getContrasenia())) return new Response(&quot;Introduce tu contraseña&quot;, true);
+<span class="nc" id="L70">        Usuario email = usuarioJpaRepository.findByEmail(usuario.getEmail()).orElse(null);</span>
+<span class="nc" id="L71">        Usuario number = usuarioJpaRepository.findByNumero(usuario.getNumero()).orElse(null);</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (!Objects.isNull(email))</span>
+<span class="nc" id="L73">            return new Response(&quot;El email que introdujo ya se encuentra en uso , por favor intente nuevamente&quot;, true);</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (!Objects.isNull(number))</span>
+<span class="nc" id="L75">            return new Response(&quot;El numero que introdujo ya se encuentra en uso , por favor intente nuevamente&quot;, true);</span>
+<span class="nc" id="L76">        Roles rol = rolJpaRepository.findById(2L).orElse(null);</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (Objects.isNull(rol)) return new Response(&quot;El rol no existe&quot;, true);</span>
+
+<span class="nc" id="L79">        usuario.setNumero(usuario.getNumero());</span>
+<span class="nc" id="L80">        usuario.getRoles().add(rol);</span>
+<span class="nc" id="L81">        usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));</span>
+<span class="nc" id="L82">        usuario.setHabilitado(false);</span>
+<span class="nc" id="L83">        usuario.setTokenValidacion(token);</span>
+<span class="nc" id="L84">        usuarioJpaRepository.save(usuario);</span>
+<span class="nc" id="L85">        return new Response(&quot;Usuario creado satisfactoriamente,por favor revise la bandeja de su correo&quot;, false);</span>
+
+    }
+
+    public Response habilitarUsuario(String token) {
+<span class="nc" id="L90">        Usuario usuario = usuarioJpaRepository.findByTokenValidacion(token);</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (!Objects.isNull(usuario)) {</span>
+<span class="nc" id="L92">            usuario.setHabilitado(true);</span>
+<span class="nc" id="L93">            usuario.setTokenValidacion(null);</span>
+<span class="nc" id="L94">            usuarioJpaRepository.save(usuario);</span>
+<span class="nc" id="L95">            return new Response(&quot;Validación de cuenta exitosa&quot;, false);</span>
+        }
+<span class="nc" id="L97">        return new Response(&quot;El token ya fue usado&quot;, true);</span>
+    }
+
+    public Response loginUsuario(HashMap&lt;String, String&gt; login) {
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (Objects.isNull(login.get(&quot;email&quot;))) return new Response(&quot;Introduce tu email&quot;, true);</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (Objects.isNull(login.get(&quot;contraseña&quot;))) return new Response(&quot;Introduce tu contraseña&quot;, true);</span>
+        try {
+<span class="nc" id="L104">            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.get(&quot;email&quot;), login.get(&quot;contraseña&quot;)));</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">            if (authentication.isAuthenticated()) {</span>
+<span class="nc" id="L106">                return new Response(&quot;Usuario autenticado correctamente&quot;, jwtUtil.generateToken(customDetailsServices.getUserDetail().getEmail(), customDetailsServices.getUserDetail().getId()), &quot;token&quot;, false);</span>
+            } else {
+<span class="nc" id="L108">                return new Response(&quot;El usuario no está autenticado&quot;, true);</span>
+            }
+<span class="nc" id="L110">        } catch (Exception e) {</span>
+<span class="nc" id="L111">            return new Response(&quot;Usuario no encontrado&quot;, true);</span>
+        }
+    }
+
+    public Response actualizarContraseña(HashMap&lt;String, String&gt; contraseñas, HttpServletRequest request) {
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (Objects.isNull(contraseñas.get(&quot;contraseña&quot;))) return new Response(&quot;Introduce la contraseña actual&quot;, true);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (Objects.isNull(contraseñas.get(&quot;contraseñaNueva&quot;)))</span>
+<span class="nc" id="L118">            return new Response(&quot;Introduce la contraseña nueva&quot;, true);</span>
+
+<span class="nc" id="L120">        String token = request.getHeader(&quot;Authorization&quot;).split(&quot; &quot;)[1];</span>
+<span class="nc" id="L121">        Usuario usuario = usuarioJpaRepository.findById(jwtUtil.getUserId(token)).orElse(null);</span>
+<span class="nc" id="L122">        String contraseñaAnterior = usuario.getContrasenia();</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (passwordEncoder.matches(contraseñas.get(&quot;contraseña&quot;), contraseñaAnterior)) {</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">            if (contraseñas.get(&quot;contraseñaNueva&quot;).equals(contraseñas.get(&quot;contraseña&quot;))) {</span>
+<span class="nc" id="L125">                return new Response(&quot;Las contraseñas deben ser distintas&quot;, true);</span>
+            }
+<span class="nc" id="L127">            usuario.setContrasenia(passwordEncoder.encode(contraseñas.get(&quot;contraseñaNueva&quot;)));</span>
+<span class="nc" id="L128">            usuarioJpaRepository.save(usuario);</span>
+<span class="nc" id="L129">            return new Response(&quot;Contraseña modificada correctamente&quot;, true);</span>
+        } else {
+<span class="nc" id="L131">            return new Response(&quot;Las contraseñas no coinciden&quot;, true);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

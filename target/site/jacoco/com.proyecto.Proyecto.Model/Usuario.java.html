@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Usuario.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Proyecto-Codigo</a> &gt; <a href="index.source.html" class="el_package">com.proyecto.Proyecto.Model</a> &gt; <span class="el_source">Usuario.java</span></div><h1>Usuario.java</h1><pre class="source lang-java linenums">package com.proyecto.Proyecto.Model;
+
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+<span class="nc" id="L15">@Setter</span>
+<span class="nc" id="L16">@AllArgsConstructor</span>
+<span class="fc" id="L17">@NoArgsConstructor</span>
+<span class="nc" id="L18">@ToString</span>
+@Entity
+<span class="nc" id="L20">@Builder</span>
+@Table(name = &quot;usuario&quot;)
+public class Usuario extends Auditing {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="nc" id="L25">    private long id;</span>
+    @Column(nullable = false)
+    @NotBlank(message = &quot;Introduzca el nombre&quot;)
+<span class="nc" id="L28">    private String nombre;</span>
+    @Column(nullable = false)
+    @NotBlank(message = &quot;Introduzca el apellido&quot;)
+<span class="nc" id="L31">    private String apellido;</span>
+    @Column(nullable = false)
+    @JsonProperty(&quot;contraseña&quot;)
+    @NotBlank(message = &quot;Introduzca la contraseña&quot;)
+<span class="nc" id="L35">    private String contrasenia;</span>
+    @Column(unique = true, nullable = false)
+    @Email(message = &quot;Introduzca un email valido&quot;)
+<span class="nc" id="L38">    private String email;</span>
+    @Column(unique = true, nullable = false)
+    @NotBlank(message = &quot;Introduzca el numero de telefono&quot;)
+    @Pattern(regexp =&quot;^(\\+51|0051|51)?[9]\\d{8}$&quot; ,message = &quot;Introduzca un numero valido&quot;)
+<span class="nc" id="L42">    private String numero;</span>
+<span class="pc" id="L43">    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL )</span>
+    @JoinTable(name = &quot;users_roles&quot;, joinColumns = @JoinColumn(name = &quot;usuario_id&quot;), inverseJoinColumns = @JoinColumn(name = &quot;rol_id&quot;))
+<span class="nc" id="L45">    private List&lt;Roles&gt; roles = new ArrayList&lt;Roles&gt;();</span>
+<span class="nc" id="L46">    private Boolean habilitado;</span>
+<span class="nc" id="L47">    private String tokenValidacion;</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Producto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Proyecto-Codigo</a> &gt; <a href="index.source.html" class="el_package">com.proyecto.Proyecto.Model</a> &gt; <span class="el_source">Producto.java</span></div><h1>Producto.java</h1><pre class="source lang-java linenums">package com.proyecto.Proyecto.Model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.*;
+
+
+<span class="nc" id="L9">@AllArgsConstructor</span>
+<span class="fc" id="L10">@NoArgsConstructor</span>
+@Getter
+<span class="nc" id="L12">@Setter</span>
+@Entity
+<span class="nc" id="L14">@Builder</span>
+@Table(name = &quot;producto&quot;)
+public class Producto {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="nc" id="L20">    private long id;</span>
+    @NotNull
+    @Column(unique = true)
+<span class="nc" id="L23">    private String nombre;</span>
+    @NotNull
+<span class="nc" id="L25">    private int precio;</span>
+    @Column(unique = true)
+<span class="nc" id="L27">    private String imagen;</span>
+<span class="nc" id="L28">    private String categoria;</span>
+<span class="nc" id="L29">    private String descripcion;</span>
+    @Positive(message = &quot;Las unidades deben ser mayor a 0&quot;)
+<span class="nc" id="L31">    private int unidades;</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

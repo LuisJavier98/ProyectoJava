@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomDetailsServices.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Proyecto-Codigo</a> &gt; <a href="index.source.html" class="el_package">com.proyecto.Proyecto.Security</a> &gt; <span class="el_source">CustomDetailsServices.java</span></div><h1>CustomDetailsServices.java</h1><pre class="source lang-java linenums">package com.proyecto.Proyecto.Security;
+
+import com.proyecto.Proyecto.Model.Roles;
+import com.proyecto.Proyecto.Model.Usuario;
+import com.proyecto.Proyecto.Repository.UsuarioJpaRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+<span class="fc" id="L21">@Slf4j</span>
+@Service
+<span class="fc" id="L23">public class CustomDetailsServices implements UserDetailsService {</span>
+
+    @Autowired
+    private UsuarioJpaRepository usuarioJpaRepository;
+
+    private Usuario usuarioDetail;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+<span class="nc" id="L32">        log.info(username);</span>
+<span class="nc" id="L33">        usuarioDetail = usuarioJpaRepository.findByEmail(username).orElse(null);</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (!Objects.isNull(usuarioDetail)) {</span>
+<span class="nc" id="L35">            System.out.println(&quot;entraa&quot;);</span>
+<span class="nc" id="L36">            System.out.println(mapRolesToAuthorities(usuarioDetail.getRoles()));</span>
+<span class="nc" id="L37">            return new User(usuarioDetail.getEmail(), usuarioDetail.getContrasenia(), usuarioDetail.getHabilitado(), true, true, true, mapRolesToAuthorities(usuarioDetail.getRoles()));</span>
+        } else {
+<span class="nc" id="L39">            throw new UsernameNotFoundException(&quot;Usuario no encontrado&quot;);</span>
+        }
+    }
+
+    private Collection&lt;GrantedAuthority&gt; mapRolesToAuthorities(List&lt;Roles&gt; roles) {
+<span class="nc" id="L44">        List&lt;GrantedAuthority&gt; lista = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        for (Roles rol : roles) {</span>
+<span class="nc" id="L46">            lista.add(new SimpleGrantedAuthority(&quot;ROLE_&quot; + rol.getRol()));</span>
+<span class="nc" id="L47">        }</span>
+<span class="nc" id="L48">        return lista;</span>
+    }
+
+    public Usuario getUserDetail() {
+<span class="nc" id="L52">        return usuarioDetail;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

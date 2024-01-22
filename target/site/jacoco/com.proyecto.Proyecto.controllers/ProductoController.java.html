@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Proyecto-Codigo</a> &gt; <a href="index.source.html" class="el_package">com.proyecto.Proyecto.controllers</a> &gt; <span class="el_source">ProductoController.java</span></div><h1>ProductoController.java</h1><pre class="source lang-java linenums">package com.proyecto.Proyecto.controllers;
+
+import com.proyecto.Proyecto.Model.Producto;
+import com.proyecto.Proyecto.Responses.Response;
+import com.proyecto.Proyecto.Service.ProductoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+
+@RestController
+@RequestMapping(&quot;api/productos&quot;)
+@SecurityScheme(name = &quot;bearerAuth&quot;, type = SecuritySchemeType.HTTP, scheme = &quot;bearer&quot;)
+
+<span class="fc" id="L27">public class ProductoController {</span>
+    @Autowired
+    private ProductoService productoService;
+
+    @GetMapping(&quot;/{id}&quot;)
+    @Operation(summary = &quot;Obtiene un producto especifico por id&quot;)
+    public ResponseEntity&lt;?&gt; obtenerProducto(@PathVariable Long id, HttpServletRequest request) {
+<span class="nc" id="L34">        Producto producto = productoService.obtenerProductoById(id, request);</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        if (!Objects.isNull(producto)) {</span>
+<span class="nc" id="L36">            return new ResponseEntity&lt;&gt;(producto, HttpStatus.OK);</span>
+        }
+<span class="nc" id="L38">        HashMap&lt;String, String&gt; respuesta = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L39">        respuesta.put(&quot;mensaje&quot;, &quot;Producto no encontrado&quot;);</span>
+<span class="nc" id="L40">        return new ResponseEntity&lt;&gt;(respuesta, HttpStatus.BAD_REQUEST);</span>
+    }
+
+    @GetMapping
+    @Operation(summary = &quot;Obtiene todos los productos&quot;)
+    public ResponseEntity&lt;List&lt;Producto&gt;&gt; obtenerProductos(HttpServletRequest request) {
+<span class="nc" id="L46">        List&lt;Producto&gt; productos = productoService.obtenerProductos(request);</span>
+<span class="nc" id="L47">        System.out.println(productos);</span>
+<span class="nc" id="L48">        return new ResponseEntity&lt;&gt;(productos, HttpStatus.OK);</span>
+    }
+
+    @PostMapping(&quot;/crearProducto&quot;)
+    @Operation(summary = &quot;Crea un producto nuevo&quot;)
+    @SecurityRequirement(name = &quot;bearerAuth&quot;)
+    public ResponseEntity&lt;HashMap&lt;String, Object&gt;&gt; crearProducto(@NotNull @RequestParam(&quot;file&quot;) MultipartFile file, @NotNull @RequestParam(&quot;nombre&quot;) String nombre, @NotNull @RequestParam(&quot;precio&quot;) String precio, @NotNull @RequestParam(&quot;categoria&quot;) String categoria, @NotNull @RequestParam(&quot;descripcion&quot;) String descripcion, @NotNull @RequestParam(&quot;unidades&quot;) String unidades) throws IOException {
+<span class="nc" id="L55">        Response respuesta = productoService.crearProducto(file, nombre, precio, categoria, descripcion, unidades);</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        if (respuesta.getIsBadResponse())</span>
+<span class="nc" id="L57">            return new ResponseEntity&lt;&gt;(respuesta.mensajeResponse(), HttpStatus.BAD_REQUEST);</span>
+<span class="nc" id="L58">        return new ResponseEntity&lt;&gt;(respuesta.mensajeResponse(), HttpStatus.OK);</span>
+
+    }
+
+    @DeleteMapping(&quot;/eliminarProducto/{id}&quot;)
+    @Operation(summary = &quot;Eliminar un producto determinado&quot;)
+    @SecurityRequirement(name = &quot;bearerAuth&quot;)
+    public ResponseEntity&lt;HashMap&lt;String, Object&gt;&gt; eliminarProducto(@NotNull @PathVariable Long id) throws IOException {
+<span class="nc" id="L66">        Response respuesta = productoService.eliminarProducto(id);</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (respuesta.getIsBadResponse())</span>
+<span class="nc" id="L68">            return new ResponseEntity&lt;&gt;(respuesta.mensajeResponse(), HttpStatus.BAD_REQUEST);</span>
+<span class="nc" id="L69">        return new ResponseEntity&lt;&gt;(respuesta.mensajeResponse(), HttpStatus.OK);</span>
+    }
+
+    @PatchMapping(&quot;/actualizarProducto/{id}&quot;)
+    @Operation(summary = &quot;Actualiza un producto determinado&quot;)
+    @SecurityRequirement(name = &quot;bearerAuth&quot;)
+    public ResponseEntity&lt;HashMap&lt;String, Object&gt;&gt; actualizarProducto(@NotNull @PathVariable Long id, @RequestParam(value = &quot;file&quot;, required = false) MultipartFile file, @RequestParam(value = &quot;nombre&quot;, required = false) String nombre, @RequestParam(value = &quot;precio&quot;, required = false) String precio, @RequestParam(value = &quot;categoria&quot;, required = false) String categoria, @RequestParam(value = &quot;descripcion&quot;, required = false) String descripcion, @RequestParam(value = &quot;unidades&quot;, required = false) String unidades) throws IOException {
+<span class="nc" id="L76">        Response respuesta = productoService.actualizarProducto(id, file, nombre, precio, categoria, descripcion, unidades);</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (respuesta.getIsBadResponse())</span>
+<span class="nc" id="L78">            return new ResponseEntity&lt;&gt;(respuesta.mensajeResponse(), HttpStatus.BAD_REQUEST);</span>
+<span class="nc" id="L79">        return new ResponseEntity&lt;&gt;(respuesta.mensajeResponse(), HttpStatus.OK);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
