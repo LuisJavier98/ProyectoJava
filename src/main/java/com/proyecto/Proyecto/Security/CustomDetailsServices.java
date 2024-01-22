@@ -29,19 +29,22 @@ public class CustomDetailsServices implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info(username);
         usuarioDetail = usuarioJpaRepository.findByEmail(username).orElse(null);
-        log.info(String.valueOf(Objects.isNull(usuarioDetail)));
         if (!Objects.isNull(usuarioDetail)) {
-            System.out.println(mapRolesToAuthorities(usuarioDetail.getRol()));
-            return new User(usuarioDetail.getEmail(), usuarioDetail.getContrasenia(), usuarioDetail.getHabilitado(), true, true, true, mapRolesToAuthorities(usuarioDetail.getRol()));
+            System.out.println("entraa");
+            System.out.println(mapRolesToAuthorities(usuarioDetail.getRoles()));
+            return new User(usuarioDetail.getEmail(), usuarioDetail.getContrasenia(), usuarioDetail.getHabilitado(), true, true, true, mapRolesToAuthorities(usuarioDetail.getRoles()));
         } else {
             throw new UsernameNotFoundException("Usuario no encontrado");
         }
     }
 
-    private Collection<GrantedAuthority> mapRolesToAuthorities(Roles rol) {
+    private Collection<GrantedAuthority> mapRolesToAuthorities(List<Roles> roles) {
         List<GrantedAuthority> lista = new ArrayList<>();
-        lista.add(new SimpleGrantedAuthority("ROLE_"+rol.getRol()));
+        for (Roles rol : roles) {
+            lista.add(new SimpleGrantedAuthority("ROLE_" + rol.getRol()));
+        }
         return lista;
     }
 

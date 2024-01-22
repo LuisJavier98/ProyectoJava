@@ -28,21 +28,28 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        if (request.getServletPath().matches("/api/usuario/activarCuenta|/api/usuario/login|/doc/swagger-ui.html|/[a-zA-Z0-9%-._#]+|/doc/swagger-ui/[a-zA-Z0-9%-._#]+|/api/productos|/v3/api-docs|/api/usuario|/api/productos/[0-9]+|/api/usuario/enviarCorreo|/images/[a-zA-Z0-9%.-]+")) {
-            System.out.println("entra aqui");
+        if (request.getServletPath().matches(
+                "/api/usuario/activarCuenta" +
+                        "|/api/usuario/login" +
+                        "|/doc/swagger-ui/.*" +
+                        "|/api/productos(/[0-9]+)?$" +
+                        "|/v3/api-docs(/.*)?$"+
+                        "|/api/usuario" +
+                        "|/api/usuario/enviarCorreo" +
+                        "|/images/.*")) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader("Authorization");
+
             String token = null;
-            if (authorizationHeader == null) {
+            if (authorizationHeader.substring(7).equals("null")) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json");
                 String jsonResponse = "{\"message\": \"Es necesario un Bearer token de autorización\"}";
                 response.getWriter().write(jsonResponse);
                 return;
             }
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            if (!authorizationHeader.substring(7).equals("null") && authorizationHeader.startsWith("Bearer ")) {
                 token = authorizationHeader.substring(7);
                 try {
                     claims = jwtUtil.extractAllClaims(token);
@@ -57,6 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = customDetailsServices.loadUserByUsername(username);
+                System.out.println("aquiii");
                 if (jwtUtil.validateToken(token, userDetails)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     new WebAuthenticationDetailsSource().buildDetails(request);
@@ -67,3 +75,4 @@ public class JwtFilter extends OncePerRequestFilter {
         }
     }
 }
+

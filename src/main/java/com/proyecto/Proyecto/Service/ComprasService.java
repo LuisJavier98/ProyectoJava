@@ -28,7 +28,6 @@ public class ComprasService {
     private ProductoJpaRepository productoJpaRepository;
     @Autowired
     private JwtUtil jwtUtil;
-
     @Transactional
     public Response compraFinalizada(HttpServletRequest request, HashMap<String, String> direccion) throws Exception {
         String token = request.getHeader("Authorization").split(" ")[1];
@@ -75,7 +74,7 @@ public class ComprasService {
         compras.forEach(compras1 ->{
             HashMap<String,Object> res=new HashMap<>();
             res.put("id",compras1.getId());
-            res.put("producto",compras1.getProducto().getId());
+            res.put("producto",compras1.getProducto());
             res.put("cantidad",compras1.getCantidad());
             res.put("direccion",compras1.getDireccion());
             res.put("fechaComprada",compras1.getFechaCompra());

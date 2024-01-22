@@ -18,7 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -47,27 +47,26 @@ public class UsuarioService {
         if (!Objects.isNull(usuarioActualizado.getNombre())) usuario.setNombre(usuarioActualizado.getNombre());
         if (!Objects.isNull(usuarioActualizado.getApellido())) usuario.setApellido(usuarioActualizado.getApellido());
         if (!Objects.isNull(usuarioActualizado.getNumero()) && Objects.isNull(usuarioNumero)) {
-            System.out.println(usuarioActualizado.getNumero() );
+            System.out.println(usuarioActualizado.getNumero());
             if (!(usuarioActualizado.getNumero() >= 900000000 && usuarioActualizado.getNumero() <= 999999999L))
                 return new Response("Introduce un numero de celular valido", true);
-            usuario.setNumero(usuarioActualizado.getNumero());
+            usuario.setNumero(String.valueOf(usuarioActualizado.getNumero()));
         } else if (!Objects.isNull(usuarioActualizado.getNumero()) && !Objects.isNull(usuarioNumeroId)) {
             return new Response("Introduce un numero distinto al anterior", true);
         } else if (!Objects.isNull(usuarioActualizado.getNumero())) {
             return new Response("El numero ya se encuentra en uso", true);
         }
-        usuario.setActualizado(new Date());
         usuarioJpaRepository.save(usuario);
         return new Response("Usuario actualizado correctamente", false);
     }
 
-    public Response crearUsuario(Usuario usuario, String token) {
-        if (usuario.getNumero() == 0) return new Response("Introduce tu numero de celular", true);
-        if (!(usuario.getNumero() > 900000000L && usuario.getNumero() <= 999999999L))
-            return new Response("Introduce un numero de celular valido", true);
-        if (Objects.isNull(usuario.getApellido())) return new Response("Introduce tu apellido", true);
-        if (Objects.isNull(usuario.getNombre())) return new Response("Introduce tu nombre", true);
-        if (Objects.isNull(usuario.getContrasenia())) return new Response("Introduce tu contraseña", true);
+    public Response crearUsuario(@Valid Usuario usuario, String token) {
+//        if (usuario.getNumero() == 0) return new Response("Introduce tu numero de celular", true);
+//        if (!(usuario.getNumero() > 900000000L && usuario.getNumero() <= 999999999L))
+//            return new Response("Introduce un numero de celular valido", true);
+//        if (Objects.isNull(usuario.getApellido())) return new Response("Introduce tu apellido", true);
+//        if (Objects.isNull(usuario.getNombre())) return new Response("Introduce tu nombre", true);
+//        if (Objects.isNull(usuario.getContrasenia())) return new Response("Introduce tu contraseña", true);
         Usuario email = usuarioJpaRepository.findByEmail(usuario.getEmail()).orElse(null);
         Usuario number = usuarioJpaRepository.findByNumero(usuario.getNumero()).orElse(null);
         if (!Objects.isNull(email))
@@ -76,10 +75,10 @@ public class UsuarioService {
             return new Response("El numero que introdujo ya se encuentra en uso , por favor intente nuevamente", true);
         Roles rol = rolJpaRepository.findById(2L).orElse(null);
         if (Objects.isNull(rol)) return new Response("El rol no existe", true);
+
         usuario.setNumero(usuario.getNumero());
-        usuario.setRol(rol);
+        usuario.getRoles().add(rol);
         usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
-        usuario.setCreado(new Date());
         usuario.setHabilitado(false);
         usuario.setTokenValidacion(token);
         usuarioJpaRepository.save(usuario);

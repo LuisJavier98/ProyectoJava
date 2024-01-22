@@ -42,7 +42,7 @@ public class JwtUtil {
     }
 
     public String createToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + 10 * 60 * 1000)).signWith(SignatureAlgorithm.HS256, token_secret).compact();
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + 10 * 60 * 1000*999)).signWith(SignatureAlgorithm.HS256, token_secret).compact();
     }
 
     public Long getUserId(String token) {

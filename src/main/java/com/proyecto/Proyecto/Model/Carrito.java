@@ -1,10 +1,8 @@
 package com.proyecto.Proyecto.Model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
-
-import java.util.Objects;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +12,7 @@ import java.util.UUID;
 @ToString
 @Table(name = "carrito")
 
-public class Carrito {
+public class Carrito  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -23,6 +21,7 @@ public class Carrito {
     @ManyToOne
     private Producto producto;
     @Column(nullable = false)
+    @Positive(message = "La cantidad debe ser mayor a cero")
     private int cantidad;
 
     public Carrito(Usuario usuario, Producto producto, int cantidad) {

@@ -66,12 +66,13 @@ public class CarritoService {
             int port = request.getLocalPort();
             List<HashMap<String, Object>> respuesta = carritos.stream().map(carrito -> {
                 HashMap<String, Object> temp = new HashMap<>();
-                temp.put("Nombre", carrito.getProducto().getNombre());
-                temp.put("Categoria", carrito.getProducto().getCategoria());
-                temp.put("Descripción", carrito.getProducto().getDescripcion());
-                temp.put("Precio", carrito.getProducto().getPrecio());
-                temp.put("Imagen", domain + ":" + port + "/images" + carrito.getProducto().getImagen());
-                temp.put("Cantidad", carrito.getCantidad());
+                temp.put("id",carrito.getProducto().getId());
+                temp.put("nombre", carrito.getProducto().getNombre());
+                temp.put("categoria", carrito.getProducto().getCategoria());
+                temp.put("descripción", carrito.getProducto().getDescripcion());
+                temp.put("precio", carrito.getProducto().getPrecio());
+                temp.put("imagen", domain + ":" + port + "/images" + carrito.getProducto().getImagen());
+                temp.put("cantidad", carrito.getCantidad());
                 return temp;
             }).collect(Collectors.toList());
             return respuesta;
