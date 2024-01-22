@@ -2,7 +2,7 @@ FROM adoptopenjdk:17-jre-hotspot
 
 WORKDIR /app
 
-COPY target/tu-aplicacion.jar /app/app.jar
+COPY target/*.jar /app/app.jar
 
 EXPOSE 8000
 
