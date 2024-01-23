@@ -4,21 +4,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @SpringBootApplication
 @EnableMethodSecurity
 @EnableJpaAuditing
-<span class="fc" id="L14">public class ProyectoCodigoApplication  implements WebMvcConfigurer {</span>
-	public static void main(String[] args) {
-<span class="nc" id="L16">		SpringApplication.run(ProyectoCodigoApplication.class, args);</span>
-<span class="nc" id="L17">	}</span>
-	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-<span class="fc" id="L20">		registry.addResourceHandler(&quot;/images/**&quot;)</span>
-<span class="fc" id="L21">				.addResourceLocations(&quot;file:images/&quot;);</span>
-<span class="fc" id="L22">	}</span>
+<span class="fc" id="L13">public class ProyectoCodigoApplication implements WebMvcConfigurer {</span>
+    public static void main(String[] args) {
+<span class="nc" id="L15">        SpringApplication.run(ProyectoCodigoApplication.class, args);</span>
+<span class="nc" id="L16">    }</span>
 }
+
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
