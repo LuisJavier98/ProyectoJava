@@ -68,7 +68,7 @@ public class SegurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration=new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:8080"));
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:8080","https://jade-caramel-402266.netlify.app/"));
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.setAllowedMethods(Arrays.asList("POST","GET","PUT","PATCH","DELETE"));
         UrlBasedCorsConfigurationSource source =new UrlBasedCorsConfigurationSource();
