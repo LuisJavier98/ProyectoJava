@@ -68,7 +68,7 @@ import java.util.Arrays;
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
 <span class="fc" id="L70">        CorsConfiguration corsConfiguration=new CorsConfiguration();</span>
-<span class="fc" id="L71">        corsConfiguration.setAllowedOrigins(Arrays.asList(&quot;http://localhost:8080&quot;));</span>
+<span class="fc" id="L71">        corsConfiguration.setAllowedOrigins(Arrays.asList(&quot;http://localhost:8080&quot;,&quot;https://jade-caramel-402266.netlify.app/&quot;));</span>
 <span class="fc" id="L72">        corsConfiguration.addAllowedHeader(&quot;*&quot;);</span>
 <span class="fc" id="L73">        corsConfiguration.setAllowedMethods(Arrays.asList(&quot;POST&quot;,&quot;GET&quot;,&quot;PUT&quot;,&quot;PATCH&quot;,&quot;DELETE&quot;));</span>
 <span class="fc" id="L74">        UrlBasedCorsConfigurationSource source =new UrlBasedCorsConfigurationSource();</span>

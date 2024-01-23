@@ -24,7 +24,7 @@ Proyecto-Codigo,com.proyecto.Proyecto.controllers,UsuarioController,212,3,14,0,3
 Proyecto-Codigo,com.proyecto.Proyecto.controllers,ProductoController,125,3,8,0,21,1,9,1,5,1
 Proyecto-Codigo,com.proyecto.Proyecto.Responses,Validations,20,6,0,0,5,2,2,2,2,2
 Proyecto-Codigo,com.proyecto.Proyecto.Responses,Response,249,0,40,0,16,0,36,0,16,0
-Proyecto-Codigo,com.proyecto.Proyecto.Security,SegurityConfig,0,165,0,0,0,22,0,8,0,8
+Proyecto-Codigo,com.proyecto.Proyecto.Security,SegurityConfig,0,169,0,0,0,22,0,8,0,8
 Proyecto-Codigo,com.proyecto.Proyecto.Security,CustomDetailsServices,82,7,4,0,13,2,5,2,3,2
 Proyecto-Codigo,com.proyecto.Proyecto.Swagger.Schemas,Direccion,81,0,14,0,4,0,15,0,8,0
 Proyecto-Codigo,com.proyecto.Proyecto.Swagger.Schemas,NuevoUsuario,253,0,46,0,8,0,39,0,16,0
