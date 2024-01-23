@@ -17,93 +17,85 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
-<span class="fc" id="L23">@AllArgsConstructor</span>
-<span class="fc" id="L24">@Slf4j</span>
+<span class="fc" id="L22">@AllArgsConstructor</span>
+<span class="fc" id="L23">@Slf4j</span>
 public class ProductoService {
     @Autowired
     private ProductoJpaRepository productoJpaRepository;
 
 
     public Producto obtenerProductoById(long id, HttpServletRequest request) {
-<span class="nc" id="L31">        Producto producto = productoJpaRepository.findById(id).orElse(null);</span>
-<span class="nc bnc" id="L32" title="All 2 branches missed.">        if (!Objects.isNull(producto)) {</span>
-<span class="nc" id="L33">            String domain = request.getScheme() + &quot;://&quot; + request.getServerName();</span>
-<span class="nc" id="L34">            int port = request.getLocalPort();</span>
-<span class="nc" id="L35">            producto.setImagen(domain + &quot;:&quot; + port + &quot;/images&quot; + producto.getImagen());</span>
-<span class="nc" id="L36">            return producto;</span>
+<span class="nc" id="L30">        Producto producto = productoJpaRepository.findById(id).orElse(null);</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (!Objects.isNull(producto)) {</span>
+<span class="nc" id="L32">            String domain = request.getScheme() + &quot;://&quot; + request.getServerName();</span>
+<span class="nc" id="L33">            int port = request.getLocalPort();</span>
+<span class="nc" id="L34">            producto.setImagen(domain + &quot;:&quot; + port + &quot;/images&quot; + producto.getImagen());</span>
+<span class="nc" id="L35">            return producto;</span>
         }
-<span class="nc" id="L38">        return null;</span>
+<span class="nc" id="L37">        return null;</span>
     }
 
     public List&lt;Producto&gt; obtenerProductos(HttpServletRequest request) {
-<span class="nc" id="L42">        String domain = request.getScheme() + &quot;://&quot; + request.getServerName();</span>
-<span class="nc" id="L43">        int port = request.getLocalPort();</span>
-<span class="nc" id="L44">        List&lt;Producto&gt; productos = productoJpaRepository.findAll();</span>
-<span class="nc" id="L45">        productos = productos.stream().map(producto -&gt; {</span>
-<span class="nc" id="L46">            producto.setImagen(domain + &quot;:&quot; + port + &quot;/images&quot; + producto.getImagen());</span>
-<span class="nc" id="L47">            return producto;</span>
-<span class="nc" id="L48">        }).collect(Collectors.toList());</span>
-<span class="nc" id="L49">        return productos;</span>
+<span class="nc" id="L41">        return productoJpaRepository.findAll();</span>
     }
 
     public Response crearProducto(MultipartFile imagen, String nombre, String precio, String categoria, String descripcion, String unidades) throws IOException {
-<span class="nc" id="L53">        Producto productoIsAlreadyExist = productoJpaRepository.findByImagen(&quot;/&quot; + imagen.getOriginalFilename()).orElse(null);</span>
-<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (!Objects.isNull(productoIsAlreadyExist)) return new Response(&quot;El producto ya fue creado&quot;, true);</span>
+<span class="nc" id="L45">        Producto productoIsAlreadyExist = productoJpaRepository.findByImagen(&quot;/&quot; + imagen.getOriginalFilename()).orElse(null);</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (!Objects.isNull(productoIsAlreadyExist)) return new Response(&quot;El producto ya fue creado&quot;, true);</span>
         try {
-<span class="nc" id="L56">            String rutaAbsoluta = Paths.get(&quot;images&quot;).toString();</span>
-<span class="nc" id="L57">            File directorioDeGuardado = new File(new File(rutaAbsoluta).getAbsolutePath());</span>
-<span class="nc" id="L58">            File savedFile = new File(directorioDeGuardado, imagen.getOriginalFilename());</span>
-<span class="nc" id="L59">            imagen.transferTo(savedFile);</span>
-<span class="nc" id="L60">            Producto producto = new Producto();</span>
-<span class="nc" id="L61">            producto.setImagen(String.format(&quot;/%s&quot;, imagen.getOriginalFilename().replaceAll(&quot; &quot;, &quot;%20&quot;)));</span>
-<span class="nc" id="L62">            producto.setPrecio(Integer.parseInt(precio));</span>
-<span class="nc" id="L63">            producto.setNombre(nombre);</span>
-<span class="nc" id="L64">            producto.setCategoria(categoria);</span>
-<span class="nc" id="L65">            producto.setDescripcion(descripcion);</span>
-<span class="nc" id="L66">            producto.setUnidades(Integer.parseInt(unidades));</span>
-<span class="nc" id="L67">            productoJpaRepository.save(producto);</span>
-<span class="nc" id="L68">            return new Response(&quot;Producto creado satisfatoriamente&quot;, false);</span>
-<span class="nc" id="L69">        } catch (Exception e) {</span>
-<span class="nc" id="L70">            return new Response(&quot;La ruta no existe&quot;, true);</span>
+<span class="nc" id="L48">            String rutaAbsoluta = Paths.get(&quot;images&quot;).toString();</span>
+<span class="nc" id="L49">            File directorioDeGuardado = new File(new File(rutaAbsoluta).getAbsolutePath());</span>
+<span class="nc" id="L50">            File savedFile = new File(directorioDeGuardado, imagen.getOriginalFilename());</span>
+<span class="nc" id="L51">            imagen.transferTo(savedFile);</span>
+<span class="nc" id="L52">            Producto producto = new Producto();</span>
+<span class="nc" id="L53">            producto.setImagen(String.format(&quot;/%s&quot;, imagen.getOriginalFilename().replaceAll(&quot; &quot;, &quot;%20&quot;)));</span>
+<span class="nc" id="L54">            producto.setPrecio(Integer.parseInt(precio));</span>
+<span class="nc" id="L55">            producto.setNombre(nombre);</span>
+<span class="nc" id="L56">            producto.setCategoria(categoria);</span>
+<span class="nc" id="L57">            producto.setDescripcion(descripcion);</span>
+<span class="nc" id="L58">            producto.setUnidades(Integer.parseInt(unidades));</span>
+<span class="nc" id="L59">            productoJpaRepository.save(producto);</span>
+<span class="nc" id="L60">            return new Response(&quot;Producto creado satisfatoriamente&quot;, false);</span>
+<span class="nc" id="L61">        } catch (Exception e) {</span>
+<span class="nc" id="L62">            return new Response(&quot;La ruta no existe&quot;, true);</span>
         }
     }
 
     public Response eliminarProducto(Long id) throws IOException {
-<span class="nc" id="L75">        Producto producto = productoJpaRepository.findById(id).orElse(null);</span>
-<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (Objects.isNull(producto)) return new Response(&quot;El producto no existe&quot;, true);</span>
-<span class="nc" id="L77">        String ruta = &quot;images&quot; + producto.getImagen().replace(&quot;%20&quot;, &quot; &quot;);</span>
-<span class="nc" id="L78">        Path path = Paths.get(ruta);</span>
-<span class="nc" id="L79">        Files.delete(path);</span>
-<span class="nc" id="L80">        productoJpaRepository.deleteById(id);</span>
-<span class="nc" id="L81">        return new Response(&quot;El producto fue eliminado correctamente&quot;, false);</span>
+<span class="nc" id="L67">        Producto producto = productoJpaRepository.findById(id).orElse(null);</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (Objects.isNull(producto)) return new Response(&quot;El producto no existe&quot;, true);</span>
+<span class="nc" id="L69">        String ruta = &quot;images&quot; + producto.getImagen().replace(&quot;%20&quot;, &quot; &quot;);</span>
+<span class="nc" id="L70">        Path path = Paths.get(ruta);</span>
+<span class="nc" id="L71">        Files.delete(path);</span>
+<span class="nc" id="L72">        productoJpaRepository.deleteById(id);</span>
+<span class="nc" id="L73">        return new Response(&quot;El producto fue eliminado correctamente&quot;, false);</span>
     }
 
     public Response actualizarProducto(Long id, MultipartFile imagen, String nombre, String precio, String categoria, String descripcion, String unidades) throws IOException {
-<span class="nc" id="L85">        Producto producto = productoJpaRepository.findById(id).orElse(null);</span>
-<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (Objects.isNull(producto)) return new Response(&quot;El producto no existe&quot;, true);</span>
-<span class="nc bnc" id="L87" title="All 4 branches missed.">        if (!Objects.isNull(imagen) &amp;&amp; !producto.getImagen().equals(&quot;/&quot; + imagen.getOriginalFilename())) {</span>
+<span class="nc" id="L77">        Producto producto = productoJpaRepository.findById(id).orElse(null);</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        if (Objects.isNull(producto)) return new Response(&quot;El producto no existe&quot;, true);</span>
+<span class="nc bnc" id="L79" title="All 4 branches missed.">        if (!Objects.isNull(imagen) &amp;&amp; !producto.getImagen().equals(&quot;/&quot; + imagen.getOriginalFilename())) {</span>
             //ELIMINAR PRODUCTO DE IMAGENES
-<span class="nc" id="L89">            String ruta = &quot;images&quot; + producto.getImagen().replace(&quot;%20&quot;, &quot; &quot;);</span>
-<span class="nc" id="L90">            Path path = Paths.get(ruta);</span>
-<span class="nc" id="L91">            Files.delete(path);</span>
+<span class="nc" id="L81">            String ruta = &quot;images&quot; + producto.getImagen().replace(&quot;%20&quot;, &quot; &quot;);</span>
+<span class="nc" id="L82">            Path path = Paths.get(ruta);</span>
+<span class="nc" id="L83">            Files.delete(path);</span>
             //AGREGAR PRODUCTO A IMAGENES
-<span class="nc" id="L93">            String rutaAbsoluta = Paths.get(&quot;images&quot;).toString();</span>
-<span class="nc" id="L94">            File directorioDeGuardado = new File(new File(rutaAbsoluta).getAbsolutePath());</span>
-<span class="nc" id="L95">            File savedFile = new File(directorioDeGuardado, imagen.getOriginalFilename());</span>
-<span class="nc" id="L96">            imagen.transferTo(savedFile);</span>
+<span class="nc" id="L85">            String rutaAbsoluta = Paths.get(&quot;images&quot;).toString();</span>
+<span class="nc" id="L86">            File directorioDeGuardado = new File(new File(rutaAbsoluta).getAbsolutePath());</span>
+<span class="nc" id="L87">            File savedFile = new File(directorioDeGuardado, imagen.getOriginalFilename());</span>
+<span class="nc" id="L88">            imagen.transferTo(savedFile);</span>
             //AGREGAR A BD
-<span class="nc" id="L98">            producto.setImagen(String.format(&quot;/%s&quot;, imagen.getOriginalFilename().replaceAll(&quot; &quot;, &quot;%20&quot;)));</span>
+<span class="nc" id="L90">            producto.setImagen(String.format(&quot;/%s&quot;, imagen.getOriginalFilename().replaceAll(&quot; &quot;, &quot;%20&quot;)));</span>
         }
-<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (!Objects.isNull(nombre)) producto.setNombre(nombre);</span>
-<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (!Objects.isNull(precio)) producto.setPrecio(Integer.parseInt(precio));</span>
-<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (!Objects.isNull(categoria)) producto.setCategoria(categoria);</span>
-<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (!Objects.isNull(descripcion)) producto.setDescripcion(descripcion);</span>
-<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (!Objects.isNull(unidades)) producto.setUnidades(Integer.parseInt(unidades));</span>
-<span class="nc" id="L105">        productoJpaRepository.save(producto);</span>
-<span class="nc" id="L106">        return new Response(&quot;Producto actualizado correctamente&quot;, false);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (!Objects.isNull(nombre)) producto.setNombre(nombre);</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (!Objects.isNull(precio)) producto.setPrecio(Integer.parseInt(precio));</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (!Objects.isNull(categoria)) producto.setCategoria(categoria);</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (!Objects.isNull(descripcion)) producto.setDescripcion(descripcion);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (!Objects.isNull(unidades)) producto.setUnidades(Integer.parseInt(unidades));</span>
+<span class="nc" id="L97">        productoJpaRepository.save(producto);</span>
+<span class="nc" id="L98">        return new Response(&quot;Producto actualizado correctamente&quot;, false);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

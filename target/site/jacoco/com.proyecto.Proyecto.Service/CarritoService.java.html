@@ -62,55 +62,53 @@ import java.util.stream.Collectors;
 <span class="nc" id="L62">        String token = request.getHeader(&quot;Authorization&quot;).split(&quot; &quot;)[1];</span>
 <span class="nc" id="L63">        List&lt;Carrito&gt; carritos = carritoJpaRepository.findAllByUsuario_id(jwtUtil.getUserId(token)).orElse(null);</span>
 <span class="nc bnc" id="L64" title="All 2 branches missed.">        if (!Objects.isNull(carritos)) {</span>
-<span class="nc" id="L65">            String domain = request.getScheme() + &quot;://&quot; + request.getServerName();</span>
-<span class="nc" id="L66">            int port = request.getLocalPort();</span>
-<span class="nc" id="L67">            List&lt;HashMap&lt;String, Object&gt;&gt; respuesta = carritos.stream().map(carrito -&gt; {</span>
-<span class="nc" id="L68">                HashMap&lt;String, Object&gt; temp = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L69">                temp.put(&quot;id&quot;,carrito.getProducto().getId());</span>
-<span class="nc" id="L70">                temp.put(&quot;nombre&quot;, carrito.getProducto().getNombre());</span>
-<span class="nc" id="L71">                temp.put(&quot;categoria&quot;, carrito.getProducto().getCategoria());</span>
-<span class="nc" id="L72">                temp.put(&quot;descripción&quot;, carrito.getProducto().getDescripcion());</span>
-<span class="nc" id="L73">                temp.put(&quot;precio&quot;, carrito.getProducto().getPrecio());</span>
-<span class="nc" id="L74">                temp.put(&quot;imagen&quot;, domain + &quot;:&quot; + port + &quot;/images&quot; + carrito.getProducto().getImagen());</span>
-<span class="nc" id="L75">                temp.put(&quot;cantidad&quot;, carrito.getCantidad());</span>
-<span class="nc" id="L76">                return temp;</span>
-<span class="nc" id="L77">            }).collect(Collectors.toList());</span>
-<span class="nc" id="L78">            return respuesta;</span>
+<span class="nc" id="L65">            List&lt;HashMap&lt;String, Object&gt;&gt; respuesta = carritos.stream().map(carrito -&gt; {</span>
+<span class="nc" id="L66">                HashMap&lt;String, Object&gt; temp = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L67">                temp.put(&quot;id&quot;,carrito.getProducto().getId());</span>
+<span class="nc" id="L68">                temp.put(&quot;nombre&quot;, carrito.getProducto().getNombre());</span>
+<span class="nc" id="L69">                temp.put(&quot;categoria&quot;, carrito.getProducto().getCategoria());</span>
+<span class="nc" id="L70">                temp.put(&quot;descripción&quot;, carrito.getProducto().getDescripcion());</span>
+<span class="nc" id="L71">                temp.put(&quot;precio&quot;, carrito.getProducto().getPrecio());</span>
+<span class="nc" id="L72">                temp.put(&quot;imagen&quot;, carrito.getProducto().getImagen());</span>
+<span class="nc" id="L73">                temp.put(&quot;cantidad&quot;, carrito.getCantidad());</span>
+<span class="nc" id="L74">                return temp;</span>
+<span class="nc" id="L75">            }).collect(Collectors.toList());</span>
+<span class="nc" id="L76">            return respuesta;</span>
         }
-<span class="nc" id="L80">        return new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L78">        return new ArrayList&lt;&gt;();</span>
     }
 
     @Transactional
     public Response eliminarProductoDelCarrito(Long id_producto, HttpServletRequest request) {
-<span class="nc" id="L85">        String token = request.getHeader(&quot;Authorization&quot;).split(&quot; &quot;)[1];</span>
-<span class="nc" id="L86">        Carrito carrito = carritoJpaRepository.findByProducto_idAndUsuario_id(id_producto, jwtUtil.getUserId(token));</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (!Objects.isNull(carrito)) {</span>
-<span class="nc" id="L88">            carritoJpaRepository.deleteByProductoIdAndUsuarioId(id_producto, jwtUtil.getUserId(token));</span>
-<span class="nc" id="L89">            return new Response(&quot;Producto eliminado del carrito&quot;, false);</span>
+<span class="nc" id="L83">        String token = request.getHeader(&quot;Authorization&quot;).split(&quot; &quot;)[1];</span>
+<span class="nc" id="L84">        Carrito carrito = carritoJpaRepository.findByProducto_idAndUsuario_id(id_producto, jwtUtil.getUserId(token));</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (!Objects.isNull(carrito)) {</span>
+<span class="nc" id="L86">            carritoJpaRepository.deleteByProductoIdAndUsuarioId(id_producto, jwtUtil.getUserId(token));</span>
+<span class="nc" id="L87">            return new Response(&quot;Producto eliminado del carrito&quot;, false);</span>
         } else {
-<span class="nc" id="L91">            return new Response(&quot;El producto no se encuentra en el carrito&quot;, true);</span>
+<span class="nc" id="L89">            return new Response(&quot;El producto no se encuentra en el carrito&quot;, true);</span>
         }
     }
 
 
     public Response actualizarCantidadDelCarrito(HashMap&lt;String, Integer&gt; cantidad, Long id, HttpServletRequest request) {
-<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (Objects.isNull(cantidad.get(&quot;cantidad&quot;))) return new Response(&quot;Introduce la cantidad de unidades a comprar&quot;, true);</span>
-<span class="nc" id="L98">        String token = request.getHeader(&quot;Authorization&quot;).split(&quot; &quot;)[1];</span>
-<span class="nc" id="L99">        Carrito carrito = carritoJpaRepository.findByProducto_idAndUsuario_id(id, jwtUtil.getUserId(token));</span>
-<span class="nc" id="L100">        Producto producto = productoJpaRepository.findById(id).orElse(null);</span>
-<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (!Objects.isNull(carrito)) {</span>
-<span class="nc bnc" id="L102" title="All 4 branches missed.">            if (cantidad.get(&quot;cantidad&quot;) &lt;= producto.getUnidades() &amp;&amp; cantidad.get(&quot;cantidad&quot;) &gt; 0) {</span>
-<span class="nc" id="L103">                carrito.setCantidad(cantidad.get(&quot;cantidad&quot;));</span>
-<span class="nc" id="L104">                carritoJpaRepository.save(carrito);</span>
-<span class="nc" id="L105">                return new Response(&quot;Producto modificado exitosamente&quot;, false);</span>
-<span class="nc bnc" id="L106" title="All 2 branches missed.">            } else if (cantidad.get(&quot;cantidad&quot;) &lt;= 0) {</span>
-<span class="nc" id="L107">                return new Response(&quot;La cantidad de productos debe ser mayor a 0&quot;, true);</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (Objects.isNull(cantidad.get(&quot;cantidad&quot;))) return new Response(&quot;Introduce la cantidad de unidades a comprar&quot;, true);</span>
+<span class="nc" id="L96">        String token = request.getHeader(&quot;Authorization&quot;).split(&quot; &quot;)[1];</span>
+<span class="nc" id="L97">        Carrito carrito = carritoJpaRepository.findByProducto_idAndUsuario_id(id, jwtUtil.getUserId(token));</span>
+<span class="nc" id="L98">        Producto producto = productoJpaRepository.findById(id).orElse(null);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (!Objects.isNull(carrito)) {</span>
+<span class="nc bnc" id="L100" title="All 4 branches missed.">            if (cantidad.get(&quot;cantidad&quot;) &lt;= producto.getUnidades() &amp;&amp; cantidad.get(&quot;cantidad&quot;) &gt; 0) {</span>
+<span class="nc" id="L101">                carrito.setCantidad(cantidad.get(&quot;cantidad&quot;));</span>
+<span class="nc" id="L102">                carritoJpaRepository.save(carrito);</span>
+<span class="nc" id="L103">                return new Response(&quot;Producto modificado exitosamente&quot;, false);</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            } else if (cantidad.get(&quot;cantidad&quot;) &lt;= 0) {</span>
+<span class="nc" id="L105">                return new Response(&quot;La cantidad de productos debe ser mayor a 0&quot;, true);</span>
             } else {
-<span class="nc" id="L109">                return new Response(&quot;No existen unidades suficientes&quot;, true);</span>
+<span class="nc" id="L107">                return new Response(&quot;No existen unidades suficientes&quot;, true);</span>
 
             }
         } else {
-<span class="nc" id="L113">            return new Response(&quot;El producto no se encuentra en el carrito&quot;, true);</span>
+<span class="nc" id="L111">            return new Response(&quot;El producto no se encuentra en el carrito&quot;, true);</span>
         }
     }
 }

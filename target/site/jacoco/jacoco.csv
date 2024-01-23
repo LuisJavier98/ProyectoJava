@@ -13,8 +13,8 @@ Proyecto-Codigo,com.proyecto.Proyecto.Exceptions,ResourceNotFoundException,28,0,
 Proyecto-Codigo,com.proyecto.Proyecto.Util,UsuarioActualizado,36,0,0,0,6,0,8,0,8,0
 Proyecto-Codigo,com.proyecto.Proyecto.Util,TokenGenerator,6,0,0,0,2,0,2,0,2,0
 Proyecto-Codigo,com.proyecto.Proyecto.Service,ComprasService,253,3,10,0,42,1,9,1,4,1
-Proyecto-Codigo,com.proyecto.Proyecto.Service,CarritoService,363,3,24,0,52,1,17,1,5,1
-Proyecto-Codigo,com.proyecto.Proyecto.Service,ProductoService,334,10,22,0,57,2,17,2,6,2
+Proyecto-Codigo,com.proyecto.Proyecto.Service,CarritoService,349,3,24,0,50,1,17,1,5,1
+Proyecto-Codigo,com.proyecto.Proyecto.Service,ProductoService,304,10,22,0,50,2,16,2,5,2
 Proyecto-Codigo,com.proyecto.Proyecto.Service,UsuarioService,430,25,40,0,60,2,25,2,5,2
 Proyecto-Codigo,com.proyecto.Proyecto,InitApplication,90,11,3,1,12,3,2,2,0,2
 Proyecto-Codigo,com.proyecto.Proyecto,ProyectoCodigoApplication,5,3,0,0,2,1,1,1,1,1
