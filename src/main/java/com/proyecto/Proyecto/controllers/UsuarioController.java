@@ -40,12 +40,11 @@ public class UsuarioController {
 
     public ResponseEntity<?> enviarCorreo(String correo, String token, HttpServletRequest request) {
         String domain = request.getScheme() + "://" + request.getServerName();
-        int port = request.getLocalPort();
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(correo);
         email.setFrom("correodeprueba.2700@gmail.com");
         email.setSubject("Mensaje de verificacion de cuenta");
-        email.setText(String.format("Ingrese al siguiente link para activar su cuenta " + "%s/api/usuario/activarCuenta?token=%s", domain + ":" + port, token));
+        email.setText(String.format("Ingrese al siguiente link para activar su cuenta " + "%s/api/usuario/activarCuenta?token=%s", domain, token));
         javaMailSender.send(email);
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
