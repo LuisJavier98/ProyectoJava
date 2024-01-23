@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -39,14 +38,7 @@ public class ProductoService {
     }
 
     public List<Producto> obtenerProductos(HttpServletRequest request) {
-        String domain = request.getScheme() + "://" + request.getServerName();
-        int port = request.getLocalPort();
-        List<Producto> productos = productoJpaRepository.findAll();
-        productos = productos.stream().map(producto -> {
-            producto.setImagen(domain + ":" + port + "/images" + producto.getImagen());
-            return producto;
-        }).collect(Collectors.toList());
-        return productos;
+        return productoJpaRepository.findAll();
     }
 
     public Response crearProducto(MultipartFile imagen, String nombre, String precio, String categoria, String descripcion, String unidades) throws IOException {
